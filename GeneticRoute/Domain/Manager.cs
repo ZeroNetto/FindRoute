@@ -4,20 +4,23 @@ namespace GeneticRoute
 {
     public class Manager
     {
+	    private static int idNow;
+
+		public readonly int id;
         public Address StartAddress { get; set; }
         public DateTime StartOfWork { get; set; }
         public Address CurrentAddress { get; set; }
 
         public Manager(Address startAddress, DateTime startOfWork)
         {
-            this.StartAddress = this.CurrentAddress = startAddress;
-            this.StartOfWork = startOfWork;
+	        id = idNow++;
+            StartAddress = CurrentAddress = startAddress;
+            StartOfWork = startOfWork;
         }
 
         public override int GetHashCode()
         {
-            return StartAddress.GetHashCode() * 13 +
-                   StartOfWork.GetHashCode() * 19;
+	        return id.GetHashCode();
         }
     }
 }
