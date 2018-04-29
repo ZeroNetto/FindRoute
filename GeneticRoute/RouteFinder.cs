@@ -7,15 +7,41 @@ namespace GeneticRoute
 	public class RouteFinder
 	{
 		private readonly EnvironmentData envData;
+		private const int selectedCount = 4;
 
 		public RouteFinder(EnvironmentData envData)
 		{
 			this.envData = envData;
 		}
 
-		public GeneticData GenerateStartPopulation()
+		public IEnumerable<GeneticData> GenerateStartPopulation()
 		{
-			throw new NotImplementedException();
+			return Enumerable.Range(0, selectedCount).Select(_ => this.GeneratePartition());
+		}
+
+		public GeneticData GeneratePartition()
+		{
+			var notVisited = new HashSet<Address>(this.envData.Clients.Select(client => client.Address));
+			var managersWays = new Dictionary<Manager, HashSet<Address>>();
+			var managerCurrAdd = new Dictionary<Manager, Address>();
+			foreach (var manager in this.envData.Managers)
+			{
+				managerCurrAdd[manager] = manager.CurrentAddress;
+				managersWays[manager] = new HashSet<Address> {manager.StartAddress};
+			}
+			while (notVisited.Any())
+			{
+				foreach (var manager in this.envData.Managers)
+				{
+					var nextAddress = this.envData
+						.TimeBetweenAddresses.GetAddressesInRightRangeInSomeTime(managerCurrAdd[manager])
+						.OneOfPrioritiestValueNotVisites(notVisited).Item1;
+					notVisited.Remove(nextAddress);
+					managerCurrAdd[manager] = nextAddress;
+					managersWays[manager].Add(nextAddress);
+				}
+			}
+			return new GeneticData(managersWays);
 		}
 
 		public GeneticData GeneticAlgorithm(
@@ -26,8 +52,6 @@ namespace GeneticRoute
 			GeneticData startPopulation
 		)
 		{
-			const int selectedCount = 4;
-
 			GeneticData best = null;
 			var currentCombinations = new List<GeneticData> { startPopulation };
 

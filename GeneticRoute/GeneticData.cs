@@ -5,6 +5,12 @@ namespace GeneticRoute
 {
 	public class GeneticData
 	{
+		private readonly Dictionary<Manager, HashSet<Address>> data;
+
+		public GeneticData(Dictionary<Manager, HashSet<Address>> data) => this.data = data;
+		
+
+		/*
 		private readonly List<List<int>> data;
 
 		public GeneticData(List<List<int>> data)
@@ -19,5 +25,6 @@ namespace GeneticRoute
 		}
 
 		public List<int> this[int index] => data[index];
+		*/
 	}
 }
