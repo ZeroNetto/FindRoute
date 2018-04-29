@@ -22,12 +22,12 @@ namespace GeneticRoute
 		public GeneticData GeneratePartition()
 		{
 			var notVisited = new HashSet<Address>(this.envData.Clients.Select(client => client.Address));
-			var managersWays = new Dictionary<Manager, HashSet<Address>>();
+			var managersWays = new Dictionary<Manager, List<Address>>();
 			var managerCurrAdd = new Dictionary<Manager, Address>();
 			foreach (var manager in this.envData.Managers)
 			{
 				managerCurrAdd[manager] = manager.CurrentAddress;
-				managersWays[manager] = new HashSet<Address> {manager.StartAddress};
+				managersWays[manager] = new List<Address> {manager.StartAddress};
 			}
 			while (notVisited.Any())
 			{

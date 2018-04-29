@@ -5,9 +5,9 @@ namespace GeneticRoute
 {
 	public class GeneticData
 	{
-		private readonly Dictionary<Manager, HashSet<Address>> data;
+		private readonly Dictionary<Manager, List<Address>> data;
 
-		public GeneticData(Dictionary<Manager, HashSet<Address>> data) => this.data = data;
+		public GeneticData(Dictionary<Manager, List<Address>> data) => this.data = data;
 		
 
 		/*
@@ -17,7 +17,7 @@ namespace GeneticRoute
 		{
 			this.data = data;
 		}
-
+x
 		public GeneticData(params int[][] data)
 		{
 			this.data = data.Select(row => row.ToList())
