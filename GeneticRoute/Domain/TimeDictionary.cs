@@ -5,29 +5,44 @@ namespace GeneticRoute
 {
     public class TimeDictionary
     {
-        private Dictionary<(Address from, Address to), TimeSpan> timeBetweenAddresses;
-        private Dictionary<Address, PriorityQueue<Address, DateTime>> addressesInRightRange;
+        private Dictionary<DateTime, Dictionary<(Address from, Address to), TimeSpan>> timeBetweenAddresses;
+        private Dictionary<DateTime, Dictionary<Address, PriorityQueue<Address, TimeSpan>>> addressesInRightRange;
         
         public TimeDictionary()
         {
-            throw new NotImplementedException();
+            timeBetweenAddresses = new Dictionary<DateTime, Dictionary<(Address from, Address to), TimeSpan>>();
+            addressesInRightRange = new Dictionary<DateTime, Dictionary<Address, PriorityQueue<Address, TimeSpan>>>();
         }
 
         public TimeSpan GetTimeBetweenAddressesInSomeTime(
-            Address start, Address end, DateTime currTime = new DateTime())
+            Address start, Address end, DateTime currTime)
         {
-            //Потом в зависимости от currTime будет разный разультат
-            return timeBetweenAddresses[(start, end)];
+            currTime = currTime.AddMinutes(((int) Math.Ceiling((double) currTime.Minute / 15)) * 15 - currTime.Minute);
+            if (!timeBetweenAddresses.ContainsKey(currTime))
+                throw new FillingDictionaryException("Что-то пошло не так");
+            return timeBetweenAddresses[currTime][(start, end)];
         }
 
-        public PriorityQueue<Address, DateTime> GetAddressesInRightRangeInSomeTime(
-            Address address, DateTime currTime = new DateTime())
+        public PriorityQueue<Address, TimeSpan> GetAddressesInRightRangeInSomeTime(
+            Address address, DateTime currTime)
         {
-            //Потом в зависимости от currTime будет разный разультат
-            return addressesInRightRange[address];
+            currTime = currTime.RoundToNearestConstMinutes();
+            if (!addressesInRightRange.ContainsKey(currTime))
+                throw new FillingDictionaryException("Что-то пошло не так");
+            return addressesInRightRange[currTime][address];
         }
 
-        //public void AddAddress();
+        public void AddAddress(Address startAddress, Address endAddress, DateTime currTime, TimeSpan valueTime)
+        {
+            if (!timeBetweenAddresses.ContainsKey(currTime))
+                timeBetweenAddresses[currTime] = new Dictionary<(Address from, Address to), TimeSpan>();
+            timeBetweenAddresses[currTime][(startAddress, endAddress)] = valueTime;
+            if (!addressesInRightRange.ContainsKey(currTime))
+                addressesInRightRange[currTime] = new Dictionary<Address, PriorityQueue<Address, TimeSpan>>();
+            if (!addressesInRightRange[currTime].ContainsKey(startAddress))
+                addressesInRightRange[currTime][startAddress] = new PriorityQueue<Address, TimeSpan>();
+            addressesInRightRange[currTime][startAddress].Add(valueTime, endAddress);
+        }
         //public void ChangeAddress();
         //public void RemoveAddress();
     }

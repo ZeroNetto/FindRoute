@@ -6,21 +6,25 @@ namespace GeneticRoute
     {
 	    private static int idNow;
 
-		public readonly int id;
+	    private readonly int Id;
+	    public readonly string Name;
         public Address StartAddress { get; set; }
         public DateTime StartOfWork { get; set; }
+        public DateTime EndOfWork { get; set; }
         public Address CurrentAddress { get; set; }
 
-        public Manager(Address startAddress, DateTime startOfWork)
+        public Manager(Address startAddress, DateTime startOfWork, DateTime endOfWork, string name)
         {
-	        id = idNow++;
+	        Name = name;
+	        Id = idNow++;
             StartAddress = CurrentAddress = startAddress;
+	        EndOfWork = endOfWork;
             StartOfWork = startOfWork;
         }
 
         public override int GetHashCode()
         {
-	        return id.GetHashCode();
+	        return Id.GetHashCode();
         }
     }
 }

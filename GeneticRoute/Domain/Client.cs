@@ -7,11 +7,13 @@ namespace GeneticRoute
         public DateTime MeetingStartTime { get; set; }
         public DateTime MeetingEndTime { get; set; }
         public Address Address { get; set; }
+	    public readonly string Name;
 
 	    public TimeSpan MeetingDuration => MeetingEndTime - MeetingStartTime;
 
-		public Client(DateTime meetingStartTime, DateTime meetingEndTime, Address address)
-        {
+		public Client(Address address, DateTime meetingStartTime, DateTime meetingEndTime, string name)
+		{
+		    Name = name;
             MeetingStartTime = meetingStartTime;
             MeetingEndTime = meetingEndTime;
             Address = address;

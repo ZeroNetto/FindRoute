@@ -5,8 +5,9 @@
 		public static void Main(string[] args)
 		{
 			var envData = new EnvironmentData();
+			envData.ToFillData();
 			var routeFinder = new RouteFinder(envData);
-			var startPopulation = routeFinder.GenerateStartPopulation();
+			//var startPopulation = routeFinder.GenerateStartPopulation();
 			// var result = routeFinder.GeneticAlgorithm(...);
 		}
 	}

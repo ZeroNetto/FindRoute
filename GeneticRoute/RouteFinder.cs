@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace GeneticRoute
@@ -32,8 +33,11 @@ namespace GeneticRoute
 			{
 				foreach (var manager in envData.Managers)
 				{
+					var currTime = !envData.AddressClient.ContainsKey(managerCurrAdd[manager]) ?
+						manager.StartOfWork : envData.AddressClient[managerCurrAdd[manager]].MeetingEndTime;
 					var nextAddress = envData
-						.TimeKeeper.GetAddressesInRightRangeInSomeTime(managerCurrAdd[manager])
+						.TimeKeeper
+						.GetAddressesInRightRangeInSomeTime(managerCurrAdd[manager], currTime)
 						.OneOfPrioritiestValueNotVisites(notVisited).Item1;
 					notVisited.Remove(nextAddress);
 					managerCurrAdd[manager] = nextAddress;
