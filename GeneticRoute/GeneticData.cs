@@ -1,14 +1,16 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 
 namespace GeneticRoute
 {
 	public class GeneticData
 	{
-		private readonly Dictionary<Manager, List<Address>> data;
+		public readonly Dictionary<Manager, List<Address>> Data;
 
-		public GeneticData(Dictionary<Manager, List<Address>> data) => this.data = data;
-		
+		public GeneticData(Dictionary<Manager, List<Address>> data)
+		{
+			Data = data;
+		}
+
 
 		/*
 		private readonly List<List<int>> data;
@@ -17,7 +19,7 @@ namespace GeneticRoute
 		{
 			this.data = data;
 		}
-x
+
 		public GeneticData(params int[][] data)
 		{
 			this.data = data.Select(row => row.ToList())

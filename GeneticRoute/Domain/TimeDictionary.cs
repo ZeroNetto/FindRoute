@@ -5,7 +5,7 @@ namespace GeneticRoute
 {
     public class TimeDictionary
     {
-        private Dictionary<Tuple<Address, Address>, DateTime> timeBetweenAddresses;
+        private Dictionary<(Address from, Address to), TimeSpan> timeBetweenAddresses;
         private Dictionary<Address, PriorityQueue<Address, DateTime>> addressesInRightRange;
         
         public TimeDictionary()
@@ -13,11 +13,11 @@ namespace GeneticRoute
             throw new NotImplementedException();
         }
 
-        public DateTime GetTimeBetweenAddressesInSomeTime(
+        public TimeSpan GetTimeBetweenAddressesInSomeTime(
             Address start, Address end, DateTime currTime = new DateTime())
         {
             //Потом в зависимости от currTime будет разный разультат
-            return timeBetweenAddresses[Tuple.Create(start, end)];
+            return timeBetweenAddresses[(start, end)];
         }
 
         public PriorityQueue<Address, DateTime> GetAddressesInRightRangeInSomeTime(

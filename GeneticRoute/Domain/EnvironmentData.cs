@@ -1,5 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.Linq;
+using JetBrains.Annotations;
 
 namespace GeneticRoute
 {
@@ -7,6 +8,12 @@ namespace GeneticRoute
 	{
 		public readonly HashSet<Manager> Managers;
 		public readonly HashSet<Client> Clients;
-		public readonly TimeDictionary TimeBetweenAddresses;
+		public readonly TimeDictionary TimeKeeper;
+
+		[CanBeNull]
+		public Client FindClientWithAddress(Address address)
+		{
+			return Clients.FirstOrDefault(client => client.Address == address);
+		}
 	} 
 }
