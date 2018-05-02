@@ -62,7 +62,7 @@
     <Compile Include="Interfaces\ICrosser.cs" />
     <Compile Include="Interfaces\IEndCondition.cs" />
     <Compile Include="Interfaces\IMutator.cs" />
-    <Compile Include="Interfaces\ISelector.cs" />
+    <Compile Include="Interfaces\EstimatorBase.cs" />
     <Compile Include="Domain\Manager.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -6,9 +6,26 @@ namespace GeneticRoute
 {
 	public class GreedyCrosser : ICrosser
 	{
+		private readonly EstimatorBase estimator;
+
+		public GreedyCrosser(EstimatorBase estimator)
+		{
+			this.estimator = estimator;
+		}
+
 		public List<GeneticData> Cross(List<GeneticData> data, EnvironmentData envData)
 		{
-			throw new NotImplementedException();
+			var ordered = estimator.GetOrderedData(data, envData);
+
+			if (ordered.Count < 3)
+				throw new InvalidOperationException("Can't cross population with less than 3 values");
+
+			var worst = ordered[ordered.Count - 1];
+			ordered.Remove(worst);
+
+			ordered.Add(CrossTwoMutations(ordered[0], ordered[1], envData));
+
+			return ordered;
 		}
 
 		private GeneticData CrossTwoMutations(GeneticData first, GeneticData second, EnvironmentData envData)

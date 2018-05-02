@@ -48,7 +48,7 @@ namespace GeneticRoute
 		}
 
 		public GeneticData GeneticAlgorithm(
-			ISelector selector,
+			EstimatorBase estimator,
 			IMutator mutator,
 			ICrosser crosser,
 			IEndCondition endCondition,
@@ -60,10 +60,10 @@ namespace GeneticRoute
 
 			while (!endCondition.IsEnd(currentCombinations, envData))
 			{
-				var selected = selector.SelectBests(currentCombinations, SelectedCount, envData);
+				var selected = estimator.SelectBests(currentCombinations, SelectedCount, envData);
 				var crossed = crosser.Cross(selected, envData);
 				currentCombinations = mutator.Mutate(crossed, envData);
-				best = selector.SelectBests(currentCombinations.Concat(new[] { best }).ToList(), 1, envData).First();
+				best = estimator.SelectBests(currentCombinations.Concat(new[] { best }).ToList(), 1, envData).First();
 			}
 
 			return best;
