@@ -125,7 +125,7 @@ namespace GeneticRoute
                         managersWorkTimes[manager] = workTimeSeconds;
                     currentManagerTime = currentClient.MeetingEndTime;
                 }
-                managersWorkTimes[manager] *= estimatedPartion.Data[manager].Count + 1 - clientsWereVisited; // Т.е. умножаем время работы на кол-во непосещенных клиентов
+                managersWorkTimes[manager] *= (estimatedPartion.Data[manager].Count + 1 - clientsWereVisited); // Т.е. умножаем время работы на кол-во непосещенных клиентов
             }
             return managersWorkTimes;
         }
