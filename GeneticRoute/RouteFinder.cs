@@ -106,28 +106,46 @@ namespace GeneticRoute
                         isFirst = false;
                         continue;
                     }
-                    var currentClient = envData.AddressClient[endAddress];
                     startAddress = endAddress;
                     endAddress = address;
-                    workTimeSeconds = timeDictionary // В этом месте это просто время пути до клиента
-                        .GetTimeBetweenAddressesInSomeTime(startAddress, endAddress, currentManagerTime)
-                        .TotalSeconds;
-                    var clearPathTime = currentClient.MeetingStartTime.Subtract(currentManagerTime).TotalSeconds;
-                    if (clearPathTime >= 0 && clearPathTime <= workTimeSeconds) // Если успевает на встречу
-                    {
-                        workTimeSeconds += envData.AddressClient[endAddress].MeetingDuration.TotalSeconds;
+                    var currentClient = envData.AddressClient[endAddress];
+                    if (TryAddWorkTime(
+                            startAddress, endAddress, currentManagerTime, timeDictionary,
+                            out workTimeSeconds, currentClient, manager, managersWorkTimes))
                         clientsWereVisited++;
-                    }
-
-                    if (!managersWorkTimes.ContainsKey(manager))
-                        managersWorkTimes.Add(manager, workTimeSeconds);
-                    else
-                        managersWorkTimes[manager] = workTimeSeconds;
                     currentManagerTime = currentClient.MeetingEndTime;
                 }
-                managersWorkTimes[manager] *= (estimatedPartion.Data[manager].Count + 1 - clientsWereVisited); // Т.е. умножаем время работы на кол-во непосещенных клиентов
+                managersWorkTimes[manager] *= (estimatedPartion.Data[manager].Count - clientsWereVisited); // Т.е. умножаем время работы на кол-во непосещенных клиентов
             }
             return managersWorkTimes;
+        }
+
+        private bool TryAddWorkTime(
+            Address startAddress,
+            Address endAddress,
+            DateTime currentManagerTime,
+            TimeDictionary timeDictionary,
+            out double workTimeSeconds,
+            Client currentClient,
+            Manager manager,
+            Dictionary<Manager, double> managersWorkTimes
+            )
+        {
+            var wasVisited = false;
+            workTimeSeconds = timeDictionary // В этом месте это просто время пути до клиента
+                .GetTimeBetweenAddressesInSomeTime(startAddress, endAddress, currentManagerTime)
+                .TotalSeconds;
+            var clearPathTime = currentClient.MeetingStartTime.Subtract(currentManagerTime).TotalSeconds;
+            if (clearPathTime >= 0 && clearPathTime <= workTimeSeconds) // Если успевает на встречу
+            {
+                workTimeSeconds += envData.AddressClient[endAddress].MeetingDuration.TotalSeconds;
+                wasVisited = true;
+            }
+            if (!managersWorkTimes.ContainsKey(manager))
+                managersWorkTimes.Add(manager, workTimeSeconds);
+            else
+                managersWorkTimes[manager] = workTimeSeconds;
+            return wasVisited;
         }
     }
 }
