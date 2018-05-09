@@ -5,7 +5,7 @@ namespace GeneticRoute
 {
 	public abstract class EstimatorBase
 	{
-		public abstract List<GeneticData>  GetOrderedData(List<GeneticData> data, EnvironmentData envData);
+		public abstract List<GeneticData> GetOrderedData(List<GeneticData> data, EnvironmentData envData);
 
 		public List<GeneticData> SelectBests(List<GeneticData> data, int count, EnvironmentData envData)
 		{
