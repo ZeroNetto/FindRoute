@@ -1,13 +1,32 @@
-﻿namespace GeneticRoute
+﻿using System.Linq;
+using Autofac;
+
+namespace GeneticRoute
 {
 	public class Program
 	{ 
 		public static void Main(string[] args)
 		{
-			var envData = new EnvironmentData();
-			var routeFinder = new RouteFinder(envData);
-			var startPopulation = routeFinder.GenerateStartPopulation();
-			// var result = routeFinder.GeneticAlgorithm(...);
+			var container = GetDiContainer();
+			var routeFinder = container.Resolve<RouteFinder>();
+			var startPopulation = routeFinder.GenerateStartPopulation().ToList();
+			var result = routeFinder.GeneticAlgorithm(startPopulation);
+		}
+
+		private static IContainer GetDiContainer()
+		{
+			var builder = new ContainerBuilder();
+
+			builder.RegisterType<CountEndCondition>()
+				.As<IEndCondition>()
+				.WithParameter("count", 100);
+			builder.RegisterType<Estimator>().As<EstimatorBase>();
+			builder.RegisterType<GreedyCrosser>().As<ICrosser>();
+			builder.RegisterType<EmptyMutator>().As<IMutator>();
+			builder.RegisterType<EnvironmentData>();
+			builder.RegisterType<RouteFinder>();
+
+			return builder.Build();
 		}
 	}
 }

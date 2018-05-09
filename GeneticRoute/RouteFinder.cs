@@ -1,17 +1,31 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 
 namespace GeneticRoute
 {
     public class RouteFinder
     {
-        private readonly EnvironmentData envData;
-        private const int SelectedCount = 4;
+	    private const int SelectedCount = 4;
 
-        public RouteFinder(EnvironmentData envData)
+		private readonly EnvironmentData envData;
+	    private readonly EstimatorBase estimator;
+	    private readonly IMutator mutator;
+	    private readonly ICrosser crosser;
+	    private readonly IEndCondition endCondition;
+
+        public RouteFinder(
+			EnvironmentData envData, 
+			EstimatorBase estimator, 
+			IMutator mutator, 
+			ICrosser crosser, 
+			IEndCondition endCondition
+	    )
         {
-            this.envData = envData;
+	        this.envData = envData;
+	        this.estimator = estimator;
+	        this.mutator = mutator;
+	        this.crosser = crosser;
+	        this.endCondition = endCondition;
         }
 
         public IEnumerable<GeneticData> GenerateStartPopulation()
@@ -47,13 +61,7 @@ namespace GeneticRoute
             return new GeneticData(managersWays);
         }
 
-        public GeneticData GeneticAlgorithm(
-            EstimatorBase estimator,
-            IMutator mutator,
-            ICrosser crosser,
-            IEndCondition endCondition,
-            List<GeneticData> startPopulation
-        )
+        public GeneticData GeneticAlgorithm(List<GeneticData> startPopulation)
         {
             GeneticData best = null;
             var currentCombinations = startPopulation;

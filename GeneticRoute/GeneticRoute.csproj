@@ -32,6 +32,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Autofac, Version=4.2.0.0, Culture=neutral, PublicKeyToken=17863af14b0044da, processorArchitecture=MSIL">
+      <HintPath>..\packages\Autofac.4.2.0\lib\net45\Autofac.dll</HintPath>
+    </Reference>
     <Reference Include="JetBrains.Annotations, Version=11.1.0.0, Culture=neutral, PublicKeyToken=1010a0d8d6380325">
       <HintPath>..\packages\JetBrains.Annotations.11.1.0\lib\net20\JetBrains.Annotations.dll</HintPath>
     </Reference>
@@ -60,6 +63,8 @@
     <Compile Include="Exceptions\FillingDictionaryException.cs" />
     <Compile Include="GeneticData.cs" />
     <Compile Include="GreedyCrosser.cs" />
+    <Compile Include="CountEndCondition.cs" />
+    <Compile Include="EmptyMutator.cs" />
     <Compile Include="Interfaces\ICrosser.cs" />
     <Compile Include="Interfaces\IEndCondition.cs" />
     <Compile Include="Interfaces\IMutator.cs" />
