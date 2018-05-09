@@ -16,7 +16,6 @@ namespace GeneticRoute
 		private DateTime firstTime;
 		private DateTime lastTime;
 		
-		
 		public EnvironmentData()
 		{
 			Clients = new HashSet<Client>();
@@ -27,10 +26,9 @@ namespace GeneticRoute
 			lastTime = DateTime.MinValue;
 		}
 		
-		public void ToFillData()
+		public void ParseFromFile(string pathToManagersFile, string pathToClientsFile)
 		{
-			
-			using (var managersFile = new StreamReader("Менеджеры.txt"))
+			using (var managersFile = new StreamReader(pathToManagersFile))
 			{
 				while (true)
 				{
@@ -44,14 +42,15 @@ namespace GeneticRoute
 						firstTime = startTime;
 					if (endTime > lastTime)
 						lastTime = endTime;
-					this.Managers.Add(new Manager(
+					Managers.Add(new Manager(
 						new Address(managerData[1]),
 						startTime,
 						endTime,
-						managerData[0]));
+						managerData[0])
+					);
 				}
 			}
-			using (var clientsFile = new StreamReader("Клиенты.txt"))
+			using (var clientsFile = new StreamReader(pathToClientsFile))
 			{
 				while (true)
 				{
@@ -65,11 +64,12 @@ namespace GeneticRoute
 						firstTime = startTime;
 					if (endTime > lastTime)
 						lastTime = endTime;
-					this.Clients.Add(new Client(
+					Clients.Add(new Client(
 						new Address(clientData[1]),
 						startTime,
 						endTime,
-						clientData[0]));
+						clientData[0])
+					);
 				}
 			}
 			ToFillTime();
@@ -107,10 +107,12 @@ namespace GeneticRoute
 						var timeSeconds = date.Subtract(new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)).TotalSeconds;
 						var origins = string.Join("+ON|", addresses.Select(address => address.Name)).Replace(' ', '+');
 						var url = string.Format(
-							"https://maps.googleapis.com/maps/api/distancematrix/json?origins={0}+ON&destinations={0}+ON&mode=driving&language=ru-RU&key={1}&traffic_model=pessimistic&departure_time={2}",
+							"https://maps.googleapis.com/maps/api/distancematrix/json?origins={0}+ON&destinations={0}+ON&mode=driving&language=ru-RU&key={1}&traffic_model={3}&departure_time={2}",
 							origins,
 							keysEnum.Current,
-							timeSeconds);
+							timeSeconds,
+							trafficModel
+						);
 						var request = (HttpWebRequest) WebRequest.Create(url);
 						request.UserAgent = "Mozilla/5.0 (compatible; ABrowse 0.4; Syllable)";
 						using (var stream = request.GetResponse().GetResponseStream())

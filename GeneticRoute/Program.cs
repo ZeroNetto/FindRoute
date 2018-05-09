@@ -17,10 +17,12 @@ namespace GeneticRoute
 		{
 			var builder = new ContainerBuilder();
 
-			builder.RegisterType<IEndCondition>().As<CountEndCondition>();
-			builder.RegisterType<EstimatorBase>().As<Estimator>();
-			builder.RegisterType<ICrosser>().As<GreedyCrosser>();
-			builder.RegisterType<IMutator>().As<EmptyMutator>();
+			builder.RegisterType<CountEndCondition>()
+				.As<IEndCondition>()
+				.WithParameter("count", 100);
+			builder.RegisterType<Estimator>().As<EstimatorBase>();
+			builder.RegisterType<GreedyCrosser>().As<ICrosser>();
+			builder.RegisterType<EmptyMutator>().As<IMutator>();
 			builder.RegisterType<EnvironmentData>();
 			builder.RegisterType<RouteFinder>();
 

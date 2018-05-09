@@ -63,8 +63,8 @@
     <Compile Include="Exceptions\FillingDictionaryException.cs" />
     <Compile Include="GeneticData.cs" />
     <Compile Include="GreedyCrosser.cs" />
-    <Compile Include="Interfaces\CountEndCondition.cs" />
-    <Compile Include="Interfaces\EmptyMutator.cs" />
+    <Compile Include="CountEndCondition.cs" />
+    <Compile Include="EmptyMutator.cs" />
     <Compile Include="Interfaces\ICrosser.cs" />
     <Compile Include="Interfaces\IEndCondition.cs" />
     <Compile Include="Interfaces\IMutator.cs" />
