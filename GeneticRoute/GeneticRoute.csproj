@@ -55,6 +55,7 @@
     <Compile Include="Domain\Client.cs" />
     <Compile Include="Domain\EnvironmentData.cs" />
     <Compile Include="Domain\TimeDictionary.cs" />
+    <Compile Include="Estimator.cs" />
     <Compile Include="Exceptions\AcquisitionAPIException.cs" />
     <Compile Include="Exceptions\FillingDictionaryException.cs" />
     <Compile Include="GeneticData.cs" />
