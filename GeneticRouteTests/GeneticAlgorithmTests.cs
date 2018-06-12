@@ -8,7 +8,7 @@ using Autofac;
 namespace GeneticRouteTests
 {
 	[TestFixture]
-	public class UnitTest1_Should
+	public class GeneticAlgorithm_Should
 	{
 		private RouteFinder routeFinder;
 		private TimeDictionary timeDictionary;
