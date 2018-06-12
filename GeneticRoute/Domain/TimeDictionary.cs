@@ -3,11 +3,11 @@ using System.Collections.Generic;
 
 namespace GeneticRoute
 {
-    public class TimeDictionary
+	public class TimeDictionary : ITimeDictionary
     {
-        private Dictionary<DateTime, Dictionary<(Address from, Address to), TimeSpan>> timeBetweenAddresses;
-        private Dictionary<DateTime, Dictionary<Address, PriorityQueue<Address, TimeSpan>>> addressesInRightRange;
-        
+        private readonly Dictionary<DateTime, Dictionary<(Address from, Address to), TimeSpan>> timeBetweenAddresses;
+        private readonly Dictionary<DateTime, Dictionary<Address, PriorityQueue<Address, TimeSpan>>> addressesInRightRange;
+
         public TimeDictionary()
         {
             timeBetweenAddresses = new Dictionary<DateTime, Dictionary<(Address from, Address to), TimeSpan>>();
@@ -17,9 +17,11 @@ namespace GeneticRoute
         public TimeSpan GetTimeBetweenAddressesInSomeTime(
             Address start, Address end, DateTime currTime)
         {
-            currTime = currTime.AddMinutes(((int) Math.Ceiling((double) currTime.Minute / 15)) * 15 - currTime.Minute);
+	        currTime = currTime.RoundToNearestConstMinutes();
             if (!timeBetweenAddresses.ContainsKey(currTime))
-                throw new FillingDictionaryException("Что-то пошло не так");
+                throw new FillingDictionaryException("Can't get time interval between addresses " +
+                        $"[{start} - {end}] at {currTime} (can't find key in dictionary)");
+
             return timeBetweenAddresses[currTime][(start, end)];
         }
 
@@ -32,7 +34,8 @@ namespace GeneticRoute
             return addressesInRightRange[currTime][address];
         }
 
-        public void AddAddress(Address startAddress, Address endAddress, DateTime currTime, TimeSpan valueTime)
+        public void AddTimeInterval(
+	        Address startAddress, Address endAddress, DateTime currTime, TimeSpan valueTime)
         {
             if (!timeBetweenAddresses.ContainsKey(currTime))
                 timeBetweenAddresses[currTime] = new Dictionary<(Address from, Address to), TimeSpan>();

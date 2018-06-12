@@ -4,12 +4,10 @@ namespace GeneticRoute
 {
     public static class Time
     {
-        private const int FrequeOfReq = 15;
-        
-        public static DateTime RoundToNearestConstMinutes(this DateTime dateTime)
+        public static DateTime RoundToNearestConstMinutes(this DateTime dateTime, int frequeOfReq = 15)
         {
             return dateTime.AddMinutes(
-                ((int)Math.Ceiling((double) dateTime.Minute / FrequeOfReq)) * FrequeOfReq - dateTime.Minute);
+                (int)Math.Ceiling((double) dateTime.Minute / frequeOfReq) * frequeOfReq - dateTime.Minute);
         }
 
         public static DateTime ToDropMinutes(this DateTime dateTime)

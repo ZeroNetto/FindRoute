@@ -62,7 +62,7 @@ namespace GeneticRoute
 
 		private static List<Address> GetTimeCorrectWayFrom(
 			List<Address> addresses, 
-			Manager manager, 
+			Manager manager,
 			EnvironmentData envData
 		)
 		{

@@ -52,7 +52,7 @@ namespace GeneticRoute
                     var nextAddress = envData
                         .TimeKeeper
                         .GetAddressesInRightRangeInSomeTime(managerCurrAdd[manager], currTime)
-                        .OneOfPrioritiestValueNotVisites(notVisited).Item1;
+                        .GetMostPrioritiestValueExcept(notVisited).Item1;
                     notVisited.Remove(nextAddress);
                     managerCurrAdd[manager] = nextAddress;
                     managersWays[manager].Add(nextAddress);
@@ -71,7 +71,7 @@ namespace GeneticRoute
                 var selected = estimator.SelectBests(currentCombinations, SelectedCount, envData);
                 var crossed = crosser.Cross(selected, envData);
                 currentCombinations = mutator.Mutate(crossed, envData);
-                best = estimator.SelectBests(currentCombinations.Concat(new[] { best }).ToList(), 1, envData).First();
+                best = estimator.SelectBests(best == null ? currentCombinations : currentCombinations.Concat(new[] { best }).ToList(), 1, envData).First();
             }
 
             return best;

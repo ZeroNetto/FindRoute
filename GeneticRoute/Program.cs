@@ -23,7 +23,8 @@ namespace GeneticRoute
 			builder.RegisterType<Estimator>().As<EstimatorBase>();
 			builder.RegisterType<GreedyCrosser>().As<ICrosser>();
 			builder.RegisterType<EmptyMutator>().As<IMutator>();
-			builder.RegisterType<EnvironmentData>();
+			builder.RegisterType<EnvironmentData>()
+				.WithParameter("timeDictionary", new TimeDictionary());
 			builder.RegisterType<RouteFinder>();
 
 			return builder.Build();

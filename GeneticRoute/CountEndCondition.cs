@@ -2,7 +2,7 @@
 
 namespace GeneticRoute
 {
-	class CountEndCondition : IEndCondition
+	public class CountEndCondition : IEndCondition
 	{
 		private int countNow;
 		private readonly int count;
@@ -15,9 +15,11 @@ namespace GeneticRoute
 
 		public bool IsEnd(List<GeneticData> data, EnvironmentData envData)
 		{
-			var result = countNow < count;
-			countNow = (countNow + 1) % count;
-			return result;
+			if (countNow >= count)
+				return true;
+
+			countNow++;
+			return false;
 		}
 	}
 }

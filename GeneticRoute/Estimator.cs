@@ -1,14 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace GeneticRoute
 {
     public class Estimator : EstimatorBase
     {
-        private const int maxWorkTimeSeconds = 8 * 60 * 60;
+        private const int MaxWorkTimeSeconds = 8 * 60 * 60;
 
         public override List<GeneticData> GetOrderedData(List<GeneticData> data, EnvironmentData envData)
         {
@@ -28,7 +26,7 @@ namespace GeneticRoute
             // Счтитаем по отклонению от среднего времени и рабочего дня
             // Можно поэксперементировать с левой частью, т.к. она отвечает за равноправие
             foreach (var workTimeSeconds in managersWorkTimes.Values)
-                estimate += Math.Abs(averageWorkTimeSeconds - workTimeSeconds) * workTimeSeconds / maxWorkTimeSeconds;
+                estimate += Math.Abs(averageWorkTimeSeconds - workTimeSeconds) * workTimeSeconds / MaxWorkTimeSeconds;
             return estimate;
         }
 

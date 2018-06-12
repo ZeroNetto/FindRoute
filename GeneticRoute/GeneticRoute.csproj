@@ -57,6 +57,9 @@
     <Compile Include="Domain\Address.cs" />
     <Compile Include="Domain\Client.cs" />
     <Compile Include="Domain\EnvironmentData.cs" />
+    <Compile Include="GoogleDataParser.cs" />
+    <Compile Include="Interfaces\IEnvironmentDataParser.cs" />
+    <Compile Include="Interfaces\ITimeDictionary.cs" />
     <Compile Include="Domain\TimeDictionary.cs" />
     <Compile Include="Estimator.cs" />
     <Compile Include="Exceptions\AcquisitionAPIException.cs" />
