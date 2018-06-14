@@ -82,8 +82,8 @@ namespace GeneticRouteTests
 			var addresses = new Address[]
 			{
 				new Address("1"),
-				new Address("3"),
 				new Address("2"),
+				new Address("3"),
 				new Address("4")
 			};
 
