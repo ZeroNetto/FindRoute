@@ -27,6 +27,7 @@ namespace GeneticRoute
             // Можно поэксперементировать с левой частью, т.к. она отвечает за равноправие
             foreach (var workTimeSeconds in managersWorkTimes.Values)
                 estimate += Math.Abs(averageWorkTimeSeconds - workTimeSeconds) * workTimeSeconds / MaxWorkTimeSeconds;
+	        Console.WriteLine(string.Join("; ", geneticData.Data[geneticData.Data.Keys.First()]) + " : " + estimate);
             return estimate;
         }
 

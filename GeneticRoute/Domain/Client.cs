@@ -13,11 +13,19 @@ namespace GeneticRoute
 
 		public Client(Address address, DateTime meetingStartTime, DateTime meetingEndTime, string name)
 		{
+			if (meetingStartTime > meetingEndTime)
+				throw new ArgumentException("Time of meeting end should be later than meeting start time");
+
 		    Name = name;
             MeetingStartTime = meetingStartTime;
             MeetingEndTime = meetingEndTime;
             Address = address;
         }
+
+	    public Client(Address address, DateTime meetingStartTime, TimeSpan duration, string name)
+		    : this(address, meetingStartTime, meetingStartTime + duration, name)
+	    {
+	    }
 
         public override int GetHashCode()
         {

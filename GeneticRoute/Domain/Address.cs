@@ -13,5 +13,10 @@
         }
 
         public override int GetHashCode() => Id.GetHashCode();
+
+	    public override string ToString()
+	    {
+		    return $"id: {Id} - '{Name}'";
+	    }
     }
 }
