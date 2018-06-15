@@ -24,7 +24,12 @@ namespace GeneticRoute
 
         public override int GetHashCode()
         {
-	        return Id.GetHashCode();
+	        return Name.GetHashCode();
         }
+
+	    public override bool Equals(object obj)
+	    {
+		    return Name == ((Manager) obj)?.Name;
+	    }
     }
 }

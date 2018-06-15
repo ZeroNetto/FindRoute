@@ -47,6 +47,9 @@ namespace GeneticRoute
             {
                 foreach (var manager in envData.Managers)
                 {
+	                if (!notVisited.Any())
+		                break;
+
                     var currTime = !envData.AddressClient.ContainsKey(managerCurrAdd[manager]) ?
                         manager.StartOfWork : envData.AddressClient[managerCurrAdd[manager]].MeetingEndTime;
                     var nextAddress = envData

@@ -12,11 +12,15 @@
             Name = name;
         }
 
-        public override int GetHashCode() => Id.GetHashCode();
+        public override int GetHashCode() => Name.GetHashCode();
+	    public override bool Equals(object obj)
+	    {
+		    return Name == ((Address) obj)?.Name;
+	    }
 
 	    public override string ToString()
 	    {
-		    return $"id: {Id} - '{Name}'";
+		    return Name;
 	    }
     }
 }

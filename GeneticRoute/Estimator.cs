@@ -61,6 +61,9 @@ namespace GeneticRoute
                         clientsWereVisited++;
                     currentManagerTime = currentClient.MeetingEndTime;
                 }
+
+	            if (!managersWorkTimes.ContainsKey(manager))
+		            managersWorkTimes[manager] = 0;
                 managersWorkTimes[manager] *= (geneticData.Data[manager].Count - clientsWereVisited); // Т.е. умножаем время работы на кол-во непосещенных клиентов
             }
             return managersWorkTimes;
@@ -79,10 +82,10 @@ namespace GeneticRoute
         {
             var wasVisited = false;
             workTimeSeconds = envData.TimeKeeper // В этом месте это просто время пути до клиента
-                .GetTimeBetweenAddressesInSomeTime(startAddress, endAddress, currentManagerTime)
+                .GetTimeInterval(startAddress, endAddress, currentManagerTime)
                 .TotalSeconds;
             var clearPathTime = currentClient.MeetingStartTime.Subtract(currentManagerTime).TotalSeconds;
-            if (clearPathTime >= 0 && clearPathTime <= workTimeSeconds) // Если успевает на встречу
+            if (clearPathTime >= 0 && workTimeSeconds <= clearPathTime) // Если успевает на встречу
             {
                 workTimeSeconds += envData.AddressClient[endAddress].MeetingDuration.TotalSeconds;
                 wasVisited = true;

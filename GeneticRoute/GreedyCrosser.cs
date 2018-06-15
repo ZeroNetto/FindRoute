@@ -73,7 +73,7 @@ namespace GeneticRoute
 				if (!envData.AddressClient.ContainsKey(addresses[i]))
 					throw new ArgumentException($"Can't find client with {addresses[i]} address");
 				var client = envData.AddressClient[addresses[i]];
-				var pathTime = envData.TimeKeeper.GetTimeBetweenAddressesInSomeTime(
+				var pathTime = envData.TimeKeeper.GetTimeInterval(
 					result[result.Count - 1],
 					addresses[i],
 					currentTime);

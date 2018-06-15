@@ -6,10 +6,10 @@ namespace GeneticRoute
 	{
 		public readonly HashSet<Manager> Managers;
 		public readonly HashSet<Client> Clients;
-		public readonly TimeDictionary TimeKeeper;
+		public readonly ITimeDictionary TimeKeeper;
 		public readonly Dictionary<Address, Client> AddressClient;
 
-		public EnvironmentData(HashSet<Client> clients, HashSet<Manager> managers, TimeDictionary timeDictionary)
+		public EnvironmentData(HashSet<Client> clients, HashSet<Manager> managers, ITimeDictionary timeDictionary)
 		{
 			Clients = new HashSet<Client>();
 			AddressClient = new Dictionary<Address, Client>();
@@ -19,7 +19,7 @@ namespace GeneticRoute
 			TimeKeeper = timeDictionary;
 		}
 		
-		public EnvironmentData(TimeDictionary timeDictionary) 
+		public EnvironmentData(ITimeDictionary timeDictionary) 
 			: this (new HashSet<Client>(), new HashSet<Manager>(), timeDictionary)
 		{
 		}

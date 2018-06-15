@@ -170,5 +170,46 @@ namespace GeneticRouteTests
 
 			result.Data[manager].Should().HaveCount(3);
 		}
+
+		[Test]
+		public void FindRoute_TwoManagersFivePoints_OneShouldVisitThreePointsAndSecondOtherTwoPoints()
+		{
+			const string urlToMap = "https://yandex.ru/maps/-/CBuEB0f4lC";
+			const int managersCount = 2;
+
+			var distances = new[]
+			{
+				new [] {0, 0, 16, 15, 19, 14, 28},
+				new [] {0, 0, 16, 15, 19, 14, 28},
+				new [] {16, 16, 0, 15, 30, 31, 36},
+				new [] {15, 15, 15, 0, 16, 25, 21},
+				new [] {19, 19, 30, 16, 0, 15, 7},
+				new [] {14, 14, 31, 25, 15, 0, 24},
+				new [] {28, 28, 36, 21, 7, 24, 0}
+			};
+
+			var timeDict = TimeDictionaryTestHelper.FillByDistances(managersCount, distances);
+			var envData = new EnvironmentData(timeDict);
+
+			var managersAddress = new Address("0");
+			for (var i = 0; i < managersCount; i++)
+				envData.Managers.Add(new Manager(
+					managersAddress,
+					DateTime.Today, 
+					DateTime.Today + TimeSpan.FromDays(1),
+					i.ToString()
+				));
+
+			envData.AddClient(new Client(new Address("1"), DateTime.Today + TimeSpan.FromHours(4), TimeSpan.FromMinutes(80), "1"));
+			envData.AddClient(new Client(new Address("2"), DateTime.Today + TimeSpan.FromMinutes(60 + 15), TimeSpan.FromMinutes(60), "2"));
+			envData.AddClient(new Client(new Address("3"), DateTime.Today + TimeSpan.FromHours(6), TimeSpan.FromHours(2), "3"));
+			envData.AddClient(new Client(new Address("4"), DateTime.Today + TimeSpan.FromHours(1), TimeSpan.FromMinutes(35), "4"));
+			envData.AddClient(new Client(new Address("5"), DateTime.Today + TimeSpan.FromHours(2), TimeSpan.FromMinutes(25), "5"));
+
+			var estimator = new Estimator();
+			routeFinder = new RouteFinder(envData, estimator, new EmptyMutator(), new GreedyCrosser(estimator), new CountEndCondition(100));
+			var startPopulation = routeFinder.GenerateStartPopulation().ToList();
+			var result = routeFinder.GeneticAlgorithm(startPopulation);
+		}
 	}
 }
