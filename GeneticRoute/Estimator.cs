@@ -10,40 +10,57 @@ namespace GeneticRoute
 
         public override List<GeneticData> GetOrderedData(List<GeneticData> data, EnvironmentData envData)
         {
-            return data
-                .OrderBy(geneticData => GetEstimate(geneticData, envData))
+            var estimatesWithClientsNum = new List<Tuple<GeneticData, double, int>>();
+            foreach (var geneticData in data)
+            {
+                var estimates = GetEstimateWithClientsNum(geneticData, envData);
+                estimatesWithClientsNum.Add(Tuple.Create(geneticData, estimates.Item1, estimates.Item2));
+            }
+
+            // Сначала сортируем по оценке, потом по кол-ву посещенных клиентов.
+            var temp = estimatesWithClientsNum
+                .OrderBy(estimate => estimate.Item2)
+                .ThenByDescending(estimate => estimate.Item3)
+                .Select(estimate => estimate.Item1)
                 .ToList();
+            return temp;
         }
 
-        private double GetEstimate(GeneticData geneticData, EnvironmentData envData)
+        // 1-ый - полученная оценка, 2-ой - количество посещенных клиентов.
+        private Tuple<double, int> GetEstimateWithClientsNum(GeneticData geneticData, EnvironmentData envData)
         {
             // Меньше - лучше
             var managersWorkTimes = GetWorkTimes(geneticData, envData);
             var estimate = 0.0;
             var totalWorkTime = managersWorkTimes
-                .Sum(manager => manager.Value);
+                .Sum(manager => manager.Value.Item1);
+            var clientsWereVisited = 0;
             var averageWorkTimeSeconds = totalWorkTime / managersWorkTimes.Count;
-            // Счтитаем по отклонению от среднего времени и рабочего дня
-            // Можно поэксперементировать с левой частью, т.к. она отвечает за равноправие
-            foreach (var workTimeSeconds in managersWorkTimes.Values)
-                estimate += Math.Abs(averageWorkTimeSeconds - workTimeSeconds) * workTimeSeconds / MaxWorkTimeSeconds;
-	        Console.WriteLine(string.Join("; ", geneticData.Data[geneticData.Data.Keys.First()]) + " : " + estimate);
-            return estimate;
+            // Считаем по отклонению от среднего времени и рабочего дня.
+            // Можно поэксперементировать с левой частью, т.к. она отвечает за равноправие.
+            foreach (var workTimeWithClientsNum in managersWorkTimes.Values)
+            {
+                var workTimeSeconds = workTimeWithClientsNum.Item1;
+                estimate += workTimeSeconds + Math.Abs(averageWorkTimeSeconds - workTimeSeconds) *
+                            workTimeSeconds / MaxWorkTimeSeconds;
+                clientsWereVisited += workTimeWithClientsNum.Item2;
+            }
+            return Tuple.Create(estimate, clientsWereVisited);
         }
 
-        private Dictionary<Manager, double> GetWorkTimes(
+        private Dictionary<Manager, Tuple<double, int>> GetWorkTimes(
             GeneticData geneticData,
             EnvironmentData envData
             )
         {
-            var managersWorkTimes = new Dictionary<Manager, double>();
+            var managersWorksTimeWithClientsNum = new Dictionary<Manager, Tuple<double, int>>();
             foreach (var manager in geneticData.Data.Keys)
             {
                 var startAddress = manager.StartAddress;
                 var endAddress = manager.StartAddress;
                 var isFirst = true;
-                var workTimeSeconds = 0.0;
                 var currentManagerTime = manager.StartOfWork;
+                var managerWorkTimeSeconds = 0.0;
                 var clientsWereVisited = 0;
                 foreach (var address in geneticData.Data[manager])
                 {
@@ -56,44 +73,48 @@ namespace GeneticRoute
                     endAddress = address;
                     var currentClient = envData.AddressClient[endAddress];
                     if (TryAddWorkTime(
-                            startAddress, endAddress, currentManagerTime, out workTimeSeconds,
-                            currentClient, manager, managersWorkTimes, envData))
+                            startAddress, endAddress, currentManagerTime,
+                            currentClient, manager, ref managerWorkTimeSeconds, envData))
                         clientsWereVisited++;
                     currentManagerTime = currentClient.MeetingEndTime;
                 }
-
-	            if (!managersWorkTimes.ContainsKey(manager))
-		            managersWorkTimes[manager] = 0;
-                managersWorkTimes[manager] *= (geneticData.Data[manager].Count - clientsWereVisited); // Т.е. умножаем время работы на кол-во непосещенных клиентов
+                // Умножаем время работы на кол-во непосещенных клиентов
+                if (!managersWorksTimeWithClientsNum.ContainsKey(manager))
+                    managersWorksTimeWithClientsNum.Add(manager,
+                        Tuple.Create(
+                            managerWorkTimeSeconds * (geneticData.Data[manager].Count - clientsWereVisited),
+                            clientsWereVisited));
+                else
+                    managersWorksTimeWithClientsNum[manager] = Tuple.Create(
+                        managerWorkTimeSeconds * (geneticData.Data[manager].Count - clientsWereVisited),
+                        clientsWereVisited);
             }
-            return managersWorkTimes;
+            return managersWorksTimeWithClientsNum;
         }
 
         private bool TryAddWorkTime(
             Address startAddress,
             Address endAddress,
             DateTime currentManagerTime,
-            out double workTimeSeconds,
             Client currentClient,
             Manager manager,
-            Dictionary<Manager, double> managersWorkTimes,
+            ref double managerWorkTimeSeconds,
             EnvironmentData envData
             )
         {
             var wasVisited = false;
-            workTimeSeconds = envData.TimeKeeper // В этом месте это просто время пути до клиента
+            // В этом месте это просто время пути до клиента
+            var serveClientTimeSeconds = envData.TimeKeeper
                 .GetTimeInterval(startAddress, endAddress, currentManagerTime)
                 .TotalSeconds;
-            var clearPathTime = currentClient.MeetingStartTime.Subtract(currentManagerTime).TotalSeconds;
-            if (clearPathTime >= 0 && workTimeSeconds <= clearPathTime) // Если успевает на встречу
+            var hasFreeTimeSeconds = currentClient.MeetingStartTime.Subtract(currentManagerTime).TotalSeconds;
+            // Если успевает на встречу
+            if (hasFreeTimeSeconds >= 0 && serveClientTimeSeconds <= hasFreeTimeSeconds)
             {
-                workTimeSeconds += envData.AddressClient[endAddress].MeetingDuration.TotalSeconds;
+                serveClientTimeSeconds += envData.AddressClient[endAddress].MeetingDuration.TotalSeconds;
                 wasVisited = true;
             }
-            if (!managersWorkTimes.ContainsKey(manager))
-                managersWorkTimes.Add(manager, workTimeSeconds);
-            else
-                managersWorkTimes[manager] = workTimeSeconds;
+            managerWorkTimeSeconds += serveClientTimeSeconds;
             return wasVisited;
         }
     }
