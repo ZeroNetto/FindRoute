@@ -34,10 +34,10 @@ namespace GeneticRouteTests
 		{
 			var adresses = new Address[]
 			{
-				new Address("123"),
-				new Address("1234"),
-				new Address("1235"),
-				new Address("1236")
+				new Address("0"),
+				new Address("1"),
+				new Address("2"),
+				new Address("3")
 			};
 
 			var timeDict = new TimeDictionary();

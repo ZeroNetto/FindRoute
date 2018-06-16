@@ -70,6 +70,7 @@ namespace GeneticRoute
         }
 
 	    private readonly Heap<Node> heap = new Heap<Node>();
+	    private readonly Random rnd = new Random();
 
 	    public (TValue, TPriority) Peek => heap.Peek.ToTuple();
 	    public int Count => heap.Count;
@@ -88,12 +89,11 @@ namespace GeneticRoute
         
         public (TValue, TPriority) GetMostPrioritiestValueExcept(HashSet<TValue> notNeeded)
         {
-            var random = new Random();
             while (true)
             {
                 foreach (var e in heap.List)
                 {
-                    if (notNeeded.Contains(e.Value) && random.Next(2) == 1)
+                    if (notNeeded.Contains(e.Value) && rnd.Next(2) == 1)
                         return e.ToTuple();
                 }
             }
