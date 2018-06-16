@@ -18,6 +18,9 @@ namespace GeneticRouteTests
 		public TimeSpan GetTimeInterval(
 			Address start, Address end, DateTime currentTime)
 		{
+			if (Equals(start, end))
+				return TimeSpan.Zero;
+
 			return timeBetweenAddresses[(start, end)];
 		}
 

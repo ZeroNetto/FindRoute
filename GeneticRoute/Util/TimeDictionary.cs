@@ -17,6 +17,9 @@ namespace GeneticRoute
         public TimeSpan GetTimeInterval(
             Address start, Address end, DateTime currentTime)
         {
+			if (Equals(start, end))
+				return TimeSpan.Zero;
+
 	        currentTime = currentTime.RoundToNearestConstMinutes();
             if (!timeBetweenAddresses.ContainsKey(currentTime))
                 throw new FillingDictionaryException("Can't get time interval between addresses " +

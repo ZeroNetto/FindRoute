@@ -78,7 +78,7 @@ namespace GeneticRoute
                 best = estimator.SelectBests(best == null ? currentCombinations : currentCombinations.Concat(new[] { best }).ToList(), 1, envData).First();
             }
 
-            return best;
+            return best?.ClipWrongEnds(envData);
         }
     }
 }

@@ -8,15 +8,10 @@ namespace GeneticRoute
 	{ 
 		public static void Main(string[] args)
 		{
-			foreach (var number in Enumerable.Range(0, 100))
-			{
-				var rnd = new Random();
-				Console.WriteLine(rnd.Next(2));
-			}
-//			var container = GetDiContainer();
-//			var routeFinder = container.Resolve<RouteFinder>();
-//			var startPopulation = routeFinder.GenerateStartPopulation().ToList();
-//			var result = routeFinder.GeneticAlgorithm(startPopulation);
+			var container = GetDiContainer();
+			var routeFinder = container.Resolve<RouteFinder>();
+			var startPopulation = routeFinder.GenerateStartPopulation().ToList();
+			var result = routeFinder.GeneticAlgorithm(startPopulation);
 		}
 
 		private static IContainer GetDiContainer()

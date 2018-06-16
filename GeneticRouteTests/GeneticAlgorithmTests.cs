@@ -3,36 +3,30 @@ using System.Linq;
 using NUnit.Framework;
 using FluentAssertions;
 using GeneticRoute;
-using Autofac;
 
 namespace GeneticRouteTests
 {
 	[TestFixture]
 	public class GeneticAlgorithm_Should
 	{
-		private RouteFinder routeFinder;
-		private EnvironmentData envData;
+		private const int CountOfCycles = 10000;
 
-		private static IContainer GetDiContainer()
+		private static RouteFinder GetRouteFinder(EnvironmentData environmentData)
 		{
-			var builder = new ContainerBuilder();
-
-			builder.RegisterType<CountEndCondition>()
-				.As<IEndCondition>()
-				.WithParameter("count", 100);
-			builder.RegisterType<Estimator>().As<EstimatorBase>();
-			builder.RegisterType<GreedyCrosser>().As<ICrosser>();
-			builder.RegisterType<EmptyMutator>().As<IMutator>();
-			builder.RegisterType<TimeDictionary>();
-			builder.RegisterType<RouteFinder>();
-
-			return builder.Build();
+			var estimator = new VisitedClientCountEstimator();
+			return new RouteFinder(
+				environmentData, 
+				estimator, 
+				new EmptyMutator(), 
+				new GreedyCrosser(estimator), 
+				new CountEndCondition(CountOfCycles)
+			);
 		}
 
 		[Test]
 		public void FindRoute_OneManagerThreePointsWithEmptyMeetingTime_ShouldFindBest()
 		{
-			var adresses = new Address[]
+			var adresses = new[]
 			{
 				new Address("0"),
 				new Address("1"),
@@ -58,7 +52,7 @@ namespace GeneticRouteTests
 					}
 				}
 			}
-			envData = new EnvironmentData(timeDict);
+			var envData = new EnvironmentData(timeDict);
 
 			var manager = new Manager(adresses[0], DateTime.Today, DateTime.Now, "Igor");
 			envData.Managers.Add(manager);
@@ -68,8 +62,7 @@ namespace GeneticRouteTests
 			envData.AddClient(new Client(adresses[2], timeNow + TimeSpan.FromHours(4), TimeSpan.Zero, "2"));
 			envData.AddClient(new Client(adresses[3], timeNow + TimeSpan.FromHours(6), TimeSpan.Zero, "3"));
 
-			var estimator = new Estimator();
-			routeFinder = new RouteFinder(envData, estimator, new EmptyMutator(), new GreedyCrosser(estimator), new CountEndCondition(100));
+			var routeFinder = GetRouteFinder(envData);
 			var startPopulation = routeFinder.GenerateStartPopulation().ToList();
 			var result = routeFinder.GeneticAlgorithm(startPopulation);
 
@@ -79,7 +72,7 @@ namespace GeneticRouteTests
 		[Test]
 		public void FindRoute_OneManagerFivePointsWithNotEmptyMeetingTime_ShouldFindBest()
 		{
-			var addresses = new Address[]
+			var addresses = new[]
 			{
 				new Address("1"),
 				new Address("2"),
@@ -105,7 +98,7 @@ namespace GeneticRouteTests
 					}
 				}
 			}
-			envData = new EnvironmentData(timeDict);
+			var envData = new EnvironmentData(timeDict);
 
 			var manager = new Manager(addresses[0], DateTime.Today, DateTime.Now, "Igor");
 			envData.Managers.Add(manager);
@@ -113,10 +106,9 @@ namespace GeneticRouteTests
 			var timeNow = DateTime.Today + TimeSpan.FromHours(12);
 			envData.AddClient(new Client(addresses[2], timeNow + TimeSpan.FromHours(6), TimeSpan.FromHours(1), "2"));
 			envData.AddClient(new Client(addresses[1], timeNow + TimeSpan.FromHours(2), TimeSpan.FromHours(1), "1"));
-			envData.AddClient(new Client(addresses[3], timeNow + TimeSpan.FromHours(11), TimeSpan.FromHours(2), "3"));
+			envData.AddClient(new Client(addresses[3], timeNow + TimeSpan.FromHours(9), TimeSpan.FromHours(2), "3"));
 
-			var estimator = new Estimator();
-			routeFinder = new RouteFinder(envData, estimator, new EmptyMutator(), new GreedyCrosser(estimator), new CountEndCondition(100));
+			var routeFinder = GetRouteFinder(envData);
 			var startPopulation = routeFinder.GenerateStartPopulation().ToList();
 			var result = routeFinder.GeneticAlgorithm(startPopulation);
 
@@ -127,12 +119,12 @@ namespace GeneticRouteTests
 		[Test]
 		public void FindRoute_OneManagerThreePointWithOneUnreacheble_ShouldFindBestReachebleRoute()
 		{
-			var adresses = new Address[]
+			var adresses = new[]
 			{
-				new Address("123"),
-				new Address("1234"),
-				new Address("1235"),
-				new Address("1236")
+				new Address("0"),
+				new Address("11"),
+				new Address("12"),
+				new Address("2")
 			};
 
 			var timeDict = new TimeDictionary();
@@ -153,7 +145,7 @@ namespace GeneticRouteTests
 					}
 				}
 			}
-			envData = new EnvironmentData(timeDict);
+			var envData = new EnvironmentData(timeDict);
 
 			var manager = new Manager(adresses[0], DateTime.Today, DateTime.Now, "Igor");
 			envData.Managers.Add(manager);
@@ -163,17 +155,17 @@ namespace GeneticRouteTests
 			envData.AddClient(new Client(adresses[2], timeNow + TimeSpan.FromHours(2), TimeSpan.FromHours(1), "2"));
 			envData.AddClient(new Client(adresses[3], timeNow + TimeSpan.FromHours(6), TimeSpan.FromHours(2), "3"));
 
-			var estimator = new Estimator();
-			routeFinder = new RouteFinder(envData, estimator, new EmptyMutator(), new GreedyCrosser(estimator), new CountEndCondition(100));
+			var routeFinder = GetRouteFinder(envData);
 			var startPopulation = routeFinder.GenerateStartPopulation().ToList();
 			var result = routeFinder.GeneticAlgorithm(startPopulation);
 
-			result.Data[manager].Should().HaveCount(3);
+			result.Data[manager].Should().HaveCount(2 + 1);
 		}
 
 		[Test]
 		public void FindRoute_TwoManagersFivePoints_OneShouldVisitThreePointsAndSecondOtherTwoPoints()
 		{
+			// ReSharper disable once UnusedVariable
 			const string urlToMap = "https://yandex.ru/maps/-/CBuEB0f4lC";
 			const int managersCount = 2;
 
@@ -206,10 +198,13 @@ namespace GeneticRouteTests
 			envData.AddClient(new Client(new Address("4"), DateTime.Today + TimeSpan.FromHours(1), TimeSpan.FromMinutes(35), "4"));
 			envData.AddClient(new Client(new Address("5"), DateTime.Today + TimeSpan.FromHours(2), TimeSpan.FromMinutes(25), "5"));
 
-			var estimator = new Estimator();
-			routeFinder = new RouteFinder(envData, estimator, new EmptyMutator(), new GreedyCrosser(estimator), new CountEndCondition(100));
+			var routeFinder = GetRouteFinder(envData);
 			var startPopulation = routeFinder.GenerateStartPopulation().ToList();
 			var result = routeFinder.GeneticAlgorithm(startPopulation);
+
+			// exclude start point (address of manager)
+			var visitedCounts = result.Data.Select(pair => pair.Value.Count - 1); 
+			visitedCounts.Should().Contain(2).And.Contain(3);
 		}
 	}
 }

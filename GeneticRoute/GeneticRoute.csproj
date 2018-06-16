@@ -60,6 +60,7 @@
     <Compile Include="GoogleDataParser.cs" />
     <Compile Include="Interfaces\IEnvironmentDataParser.cs" />
     <Compile Include="Interfaces\ITimeDictionary.cs" />
+    <Compile Include="VisitedClientCountEstimator.cs" />
     <Compile Include="Util\TimeDictionary.cs" />
     <Compile Include="Estimator.cs" />
     <Compile Include="Exceptions\AcquisitionAPIException.cs" />

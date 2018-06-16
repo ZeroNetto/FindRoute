@@ -30,10 +30,9 @@ namespace GeneticRoute
 
 		private GeneticData CrossTwoMutations(GeneticData first, GeneticData second, EnvironmentData envData)
 		{
-			var orderedRoutes = first.Data
-				.Select(pair => (pair.Key, GetTimeCorrectWayFrom(pair.Value, pair.Key, envData)))
-				.Concat(second.Data.Select(pair => (pair.Key, GetTimeCorrectWayFrom(pair.Value, pair.Key, envData))))
-				.OrderBy(tuple => tuple.Item2.Count)
+			var orderedRoutes = first.ClipWrongEnds(envData).Data
+				.Concat(second.ClipWrongEnds(envData).Data)
+				.OrderBy(tuple => tuple.Value.Count)
 				.ToList();
 
 			var result = new Dictionary<Manager, List<Address>>();
@@ -41,11 +40,11 @@ namespace GeneticRoute
 
 			foreach (var managerRoutePair in orderedRoutes)
 			{
-				if (result.ContainsKey(managerRoutePair.Item1))
+				if (result.ContainsKey(managerRoutePair.Key))
 					continue;
 
-				var notMeetPartOfWay = GetNotMeetPartOfWay(managerRoutePair.Item2, alreadyVisitedAddresses);
-				result[managerRoutePair.Item1] = notMeetPartOfWay;
+				var notMeetPartOfWay = GetNotMeetPartOfWay(managerRoutePair.Value, alreadyVisitedAddresses);
+				result[managerRoutePair.Key] = notMeetPartOfWay;
 
 				foreach (var notMeetAddress in notMeetPartOfWay)
 					alreadyVisitedAddresses.Add(notMeetAddress);

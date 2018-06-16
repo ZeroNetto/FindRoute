@@ -13,8 +13,8 @@ namespace GeneticRoute
             var estimatesWithClientsNum = new List<(GeneticData data, double value, int visitedCount)>();
             foreach (var geneticData in data)
             {
-	            var estimates = GetEstimateWithClientsNum(geneticData, envData);
-	            estimatesWithClientsNum.Add((geneticData, estimates.value, estimates.visitedCount));
+	            var (value, visitedCount) = GetEstimateWithClientsNum(geneticData, envData);
+	            estimatesWithClientsNum.Add((geneticData, value, visitedCount));
             }
 
             var temp = estimatesWithClientsNum
@@ -32,27 +32,28 @@ namespace GeneticRoute
             var managersWorkTimes = GetWorkTimes(geneticData, envData);
             var estimate = 0.0;
             var totalWorkTime = managersWorkTimes
-                .Sum(manager => manager.Value.Item1);
+                .Sum(manager => manager.Value.value);
             var clientsWereVisited = 0;
             var averageWorkTimeSeconds = totalWorkTime / managersWorkTimes.Count;
             // Считаем по отклонению от среднего времени и рабочего дня.
             // Можно поэксперементировать с левой частью, т.к. она отвечает за равноправие.
-            foreach (var workTimeWithClientsNum in managersWorkTimes.Values)
+            foreach (var (value, visitedCount) in managersWorkTimes.Values)
             {
-                var workTimeSeconds = workTimeWithClientsNum.Item1;
+                var workTimeSeconds = value;
                 estimate += workTimeSeconds + Math.Abs(averageWorkTimeSeconds - workTimeSeconds) *
                             workTimeSeconds / MaxWorkTimeSeconds;
-                clientsWereVisited += workTimeWithClientsNum.Item2;
+                clientsWereVisited += visitedCount;
             }
+
             return (estimate, clientsWereVisited);
         }
 
-        private Dictionary<Manager, Tuple<double, int>> GetWorkTimes(
+        private Dictionary<Manager, (double value, int visitedCount)> GetWorkTimes(
             GeneticData geneticData,
             EnvironmentData envData
             )
         {
-            var managersWorksTimeWithClientsNum = new Dictionary<Manager, Tuple<double, int>>();
+            var managersWorksTimeWithClientsNum = new Dictionary<Manager, (double value, int visitedCount)>();
             foreach (var manager in geneticData.Data.Keys)
             {
                 var startAddress = manager.StartAddress;
@@ -80,11 +81,10 @@ namespace GeneticRoute
                 // Умножаем время работы на кол-во непосещенных клиентов
                 if (!managersWorksTimeWithClientsNum.ContainsKey(manager))
                     managersWorksTimeWithClientsNum.Add(manager,
-                        Tuple.Create(
-                            managerWorkTimeSeconds * (geneticData.Data[manager].Count - clientsWereVisited),
+                        (managerWorkTimeSeconds * (geneticData.Data[manager].Count - clientsWereVisited),
                             clientsWereVisited));
                 else
-                    managersWorksTimeWithClientsNum[manager] = Tuple.Create(
+                    managersWorksTimeWithClientsNum[manager] = (
                         managerWorkTimeSeconds * (geneticData.Data[manager].Count - clientsWereVisited),
                         clientsWereVisited);
             }
