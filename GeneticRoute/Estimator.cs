@@ -10,24 +10,23 @@ namespace GeneticRoute
 
         public override List<GeneticData> GetOrderedData(List<GeneticData> data, EnvironmentData envData)
         {
-            var estimatesWithClientsNum = new List<Tuple<GeneticData, double, int>>();
+            var estimatesWithClientsNum = new List<(GeneticData data, double value, int visitedCount)>();
             foreach (var geneticData in data)
             {
-                var estimates = GetEstimateWithClientsNum(geneticData, envData);
-                estimatesWithClientsNum.Add(Tuple.Create(geneticData, estimates.Item1, estimates.Item2));
+	            var estimates = GetEstimateWithClientsNum(geneticData, envData);
+	            estimatesWithClientsNum.Add((geneticData, estimates.value, estimates.visitedCount));
             }
 
-            // Сначала сортируем по оценке, потом по кол-ву посещенных клиентов.
             var temp = estimatesWithClientsNum
-                .OrderBy(estimate => estimate.Item2)
-                .ThenByDescending(estimate => estimate.Item3)
-                .Select(estimate => estimate.Item1)
+                .OrderBy(estimate => estimate.value)
+                .ThenByDescending(estimate => estimate.visitedCount)
+                .Select(estimate => estimate.data)
                 .ToList();
             return temp;
         }
 
-        // 1-ый - полученная оценка, 2-ой - количество посещенных клиентов.
-        private Tuple<double, int> GetEstimateWithClientsNum(GeneticData geneticData, EnvironmentData envData)
+        private (double value, int visitedCount) GetEstimateWithClientsNum(
+	        GeneticData geneticData, EnvironmentData envData)
         {
             // Меньше - лучше
             var managersWorkTimes = GetWorkTimes(geneticData, envData);
@@ -45,7 +44,7 @@ namespace GeneticRoute
                             workTimeSeconds / MaxWorkTimeSeconds;
                 clientsWereVisited += workTimeWithClientsNum.Item2;
             }
-            return Tuple.Create(estimate, clientsWereVisited);
+            return (estimate, clientsWereVisited);
         }
 
         private Dictionary<Manager, Tuple<double, int>> GetWorkTimes(
