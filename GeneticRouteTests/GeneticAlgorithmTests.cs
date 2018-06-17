@@ -10,7 +10,7 @@ namespace GeneticRouteTests
 	public class GeneticAlgorithm_Should
 	{
 		private const int CountOfCycles = 20000;
-		private const int SelectedCount = 10;
+		private const int SelectedCount = 20;
 
 		private static RouteFinder GetRouteFinder(EnvironmentData environmentData)
 		{
@@ -28,7 +28,7 @@ namespace GeneticRouteTests
 		{
 			var routeFinder = GetRouteFinder(envData);
 			var startPopulation = routeFinder.GenerateStartPopulation(SelectedCount).ToList();
-			return routeFinder.GeneticAlgorithm(startPopulation, 8);
+			return routeFinder.GeneticAlgorithm(startPopulation, SelectedCount - 2);
 		}
 
 		[Test]
