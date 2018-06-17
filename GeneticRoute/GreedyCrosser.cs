@@ -28,6 +28,7 @@ namespace GeneticRoute
 			return ordered;
 		}
 
+
 		private GeneticData CrossTwoMutations(GeneticData first, GeneticData second, EnvironmentData envData)
 		{
 			var orderedRoutes = first.ClipWrongEnds(envData).Data
@@ -36,26 +37,26 @@ namespace GeneticRoute
 				.ToList();
 
 			var result = new Dictionary<Manager, List<Address>>();
-			var alreadyVisitedAddresses = new HashSet<Address>();
+			var visitedAddresses = new HashSet<Address>();
 
 			foreach (var managerRoutePair in orderedRoutes)
 			{
 				if (result.ContainsKey(managerRoutePair.Key))
 					continue;
 
-				var notMeetPartOfWay = GetNotMeetPartOfWay(managerRoutePair.Value, alreadyVisitedAddresses);
+				var notMeetPartOfWay = GetNotMeetPartOfWay(managerRoutePair.Value, visitedAddresses);
 				result[managerRoutePair.Key] = notMeetPartOfWay;
 
 				foreach (var notMeetAddress in notMeetPartOfWay)
-					alreadyVisitedAddresses.Add(notMeetAddress);
+					visitedAddresses.Add(notMeetAddress);
 			}
 
 			return new GeneticData(result);
 		}
 
-		private static List<Address> GetNotMeetPartOfWay(List<Address> addresses, HashSet<Address> alreadyVisited)
+		private static List<Address> GetNotMeetPartOfWay(List<Address> addresses, HashSet<Address> visited)
 		{
-			return addresses.TakeWhile(address => !alreadyVisited.Contains(address))
+			return addresses.TakeWhile(address => !visited.Contains(address))
 				.ToList();
 		}
 

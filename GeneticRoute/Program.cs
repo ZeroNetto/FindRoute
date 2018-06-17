@@ -1,5 +1,4 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using Autofac;
 
 namespace GeneticRoute
@@ -10,8 +9,8 @@ namespace GeneticRoute
 		{
 			var container = GetDiContainer();
 			var routeFinder = container.Resolve<RouteFinder>();
-			var startPopulation = routeFinder.GenerateStartPopulation().ToList();
-			var result = routeFinder.GeneticAlgorithm(startPopulation);
+			var startPopulation = routeFinder.GenerateStartPopulation(4).ToList();
+			var result = routeFinder.GeneticAlgorithm(startPopulation, 4);
 		}
 
 		private static IContainer GetDiContainer()

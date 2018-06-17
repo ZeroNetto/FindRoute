@@ -9,7 +9,8 @@ namespace GeneticRouteTests
 	[TestFixture]
 	public class GeneticAlgorithm_Should
 	{
-		private const int CountOfCycles = 10000;
+		private const int CountOfCycles = 20000;
+		private const int SelectedCount = 10;
 
 		private static RouteFinder GetRouteFinder(EnvironmentData environmentData)
 		{
@@ -21,6 +22,13 @@ namespace GeneticRouteTests
 				new GreedyCrosser(estimator), 
 				new CountEndCondition(CountOfCycles)
 			);
+		}
+
+		private static GeneticData GetResult(EnvironmentData envData)
+		{
+			var routeFinder = GetRouteFinder(envData);
+			var startPopulation = routeFinder.GenerateStartPopulation(SelectedCount).ToList();
+			return routeFinder.GeneticAlgorithm(startPopulation, 8);
 		}
 
 		[Test]
@@ -62,9 +70,7 @@ namespace GeneticRouteTests
 			envData.AddClient(new Client(adresses[2], timeNow + TimeSpan.FromHours(4), TimeSpan.Zero, "2"));
 			envData.AddClient(new Client(adresses[3], timeNow + TimeSpan.FromHours(6), TimeSpan.Zero, "3"));
 
-			var routeFinder = GetRouteFinder(envData);
-			var startPopulation = routeFinder.GenerateStartPopulation().ToList();
-			var result = routeFinder.GeneticAlgorithm(startPopulation);
+			var result = GetResult(envData);
 
 			result.Data[manager].ShouldBeEquivalentTo(adresses);
 		}
@@ -108,9 +114,7 @@ namespace GeneticRouteTests
 			envData.AddClient(new Client(addresses[1], timeNow + TimeSpan.FromHours(2), TimeSpan.FromHours(1), "1"));
 			envData.AddClient(new Client(addresses[3], timeNow + TimeSpan.FromHours(9), TimeSpan.FromHours(2), "3"));
 
-			var routeFinder = GetRouteFinder(envData);
-			var startPopulation = routeFinder.GenerateStartPopulation().ToList();
-			var result = routeFinder.GeneticAlgorithm(startPopulation);
+			var result = GetResult(envData);
 
 			result.Data[manager].Select(address => address.Name)
 				.ShouldBeEquivalentTo(addresses.Select(address => address.Name).OrderBy(name => name));
@@ -155,9 +159,7 @@ namespace GeneticRouteTests
 			envData.AddClient(new Client(adresses[2], timeNow + TimeSpan.FromHours(2), TimeSpan.FromHours(1), "2"));
 			envData.AddClient(new Client(adresses[3], timeNow + TimeSpan.FromHours(6), TimeSpan.FromHours(2), "3"));
 
-			var routeFinder = GetRouteFinder(envData);
-			var startPopulation = routeFinder.GenerateStartPopulation().ToList();
-			var result = routeFinder.GeneticAlgorithm(startPopulation);
+			var result = GetResult(envData);
 
 			result.Data[manager].Should().HaveCount(2 + 1);
 		}
@@ -193,14 +195,12 @@ namespace GeneticRouteTests
 				));
 
 			envData.AddClient(new Client(new Address("1"), DateTime.Today + TimeSpan.FromHours(4), TimeSpan.FromMinutes(80), "1"));
-			envData.AddClient(new Client(new Address("2"), DateTime.Today + TimeSpan.FromMinutes(60 + 15), TimeSpan.FromMinutes(60), "2"));
+			envData.AddClient(new Client(new Address("2"), DateTime.Today + TimeSpan.FromMinutes(2 * 60 + 15), TimeSpan.FromMinutes(60), "2"));
 			envData.AddClient(new Client(new Address("3"), DateTime.Today + TimeSpan.FromHours(6), TimeSpan.FromHours(2), "3"));
 			envData.AddClient(new Client(new Address("4"), DateTime.Today + TimeSpan.FromHours(1), TimeSpan.FromMinutes(35), "4"));
 			envData.AddClient(new Client(new Address("5"), DateTime.Today + TimeSpan.FromHours(2), TimeSpan.FromMinutes(25), "5"));
 
-			var routeFinder = GetRouteFinder(envData);
-			var startPopulation = routeFinder.GenerateStartPopulation().ToList();
-			var result = routeFinder.GeneticAlgorithm(startPopulation);
+			var result = GetResult(envData);
 
 			// exclude start point (address of manager)
 			var visitedCounts = result.Data.Select(pair => pair.Value.Count - 1); 

@@ -5,8 +5,6 @@ namespace GeneticRoute
 {
     public class RouteFinder
     {
-	    private const int SelectedCount = 4;
-
 		private readonly EnvironmentData envData;
 	    private readonly EstimatorBase estimator;
 	    private readonly IMutator mutator;
@@ -28,9 +26,9 @@ namespace GeneticRoute
 	        this.endCondition = endCondition;
         }
 
-        public IEnumerable<GeneticData> GenerateStartPopulation()
+        public IEnumerable<GeneticData> GenerateStartPopulation(int count)
         {
-            return Enumerable.Range(0, SelectedCount).Select(_ => GeneratePartition());
+            return Enumerable.Range(0, count).Select(_ => GeneratePartition());
         }
 
         private GeneticData GeneratePartition()
@@ -64,14 +62,14 @@ namespace GeneticRoute
             return new GeneticData(managersWays);
         }
 
-        public GeneticData GeneticAlgorithm(List<GeneticData> startPopulation)
+        public GeneticData GeneticAlgorithm(List<GeneticData> startPopulation, int countToSelect)
         {
             GeneticData best = null;
             var currentCombinations = startPopulation;
 
             while (!endCondition.IsEnd(currentCombinations, envData))
             {
-                var selected = estimator.SelectBests(currentCombinations, SelectedCount, envData);
+                var selected = estimator.SelectBests(currentCombinations, countToSelect, envData);
 				System.Console.WriteLine();
                 var crossed = crosser.Cross(selected, envData);
                 currentCombinations = mutator.Mutate(crossed, envData);
