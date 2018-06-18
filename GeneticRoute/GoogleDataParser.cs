@@ -117,9 +117,8 @@ namespace GeneticRoute
 				.ToList()
 				.Union(clients.Select(client => client.Address).ToList())
 				.Partition(sizeOfRequest);
-			var date = firstTime.RoundToNearestConstMinutes().ToUniversalTime().ToDropMinutes();
 			var endData = lastTime.RoundToNearestConstMinutes().ToUniversalTime();
-			do
+			foreach (var date in clients.Select(c => c.MeetingStartTime).Union(managers.Select(m => m.StartOfWork)))
 			{
 				foreach (var addresses in listAddresses)
 				{
@@ -170,8 +169,7 @@ namespace GeneticRoute
 						break;
 					}
 				}
-				date = date.AddMinutes(15);
-			} while (date != endData);
+			}
 
 			return timeDictionary;
 		}
