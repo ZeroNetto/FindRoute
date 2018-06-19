@@ -68,6 +68,7 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="GoogleDataParserTests.cs" />
     <Compile Include="TimeDictionaryTestHelper.cs" />
     <Compile Include="GeneticAlgorithmTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

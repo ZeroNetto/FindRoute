@@ -9,6 +9,8 @@ namespace GeneticRoute
 {
 	public class GoogleDataParser : IEnvironmentDataParser
 	{
+		private const string KeysFile = 
+			"e:/programFiles/visualstudioprojects/geneticroute/geneticroutetests/files/keys";
 		internal class GoogleMapAnswer
 		{
 			public class DistanceInfo
@@ -101,10 +103,10 @@ namespace GeneticRoute
 			const int sizeOfRequest = 5;
 			const string trafficModel = "pessimistic";
 			var keys = new List<string>();
-			using (var keysFile = new StreamReader("keys"))
+			using (var keysReader = new StreamReader(KeysFile))
 				while (true)
 				{
-					var key = keysFile.ReadLine();
+					var key = keysReader.ReadLine();
 					if (key == null)
 						break;
 					keys.Add(key);
@@ -118,7 +120,7 @@ namespace GeneticRoute
 				.Union(clients.Select(client => client.Address).ToList())
 				.Partition(sizeOfRequest);
 			var endData = lastTime.RoundToNearestConstMinutes().ToUniversalTime();
-			foreach (var date in clients.Select(c => c.MeetingStartTime).Union(managers.Select(m => m.StartOfWork)))
+			foreach (var date in clients.Select(c => c.MeetingEndTime).Union(managers.Select(m => m.StartOfWork)))
 			{
 				foreach (var addresses in listAddresses)
 				{

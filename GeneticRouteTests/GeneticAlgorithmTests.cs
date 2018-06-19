@@ -32,18 +32,6 @@ namespace GeneticRouteTests
 		}
 
         [Test]
-        public void FindRoute_UrFU_to_Parahod()
-        {
-            var envData = new GoogleDataParser().ParseFromFile(
-                "test_managers",
-                "test_clients"
-                );
-            var result = GetResult(envData);
-            result.Data[envData.Managers.First()].ShouldBeEquivalentTo(
-                envData.Clients.Select(c => c.Address).Union(envData.Managers.Select(c => c.StartAddress)));
-        }
-
-        [Test]
 		public void FindRoute_OneManagerThreePointsWithEmptyMeetingTime_ShouldFindBest()
 		{
 			var adresses = new[]
