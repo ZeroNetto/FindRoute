@@ -68,7 +68,7 @@
     <Compile Include="Estimator.cs" />
     <Compile Include="Exceptions\AcquisitionAPIException.cs" />
     <Compile Include="Exceptions\FillingDictionaryException.cs" />
-    <Compile Include="GeneticData.cs" />
+    <Compile Include="Domain\GeneticData.cs" />
     <Compile Include="GreedyCrosser.cs" />
     <Compile Include="CountEndCondition.cs" />
     <Compile Include="EmptyMutator.cs" />
