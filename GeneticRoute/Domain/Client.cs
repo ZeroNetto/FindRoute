@@ -1,12 +1,13 @@
 ﻿using System;
+using GeneticRoute.Util;
 
 namespace GeneticRoute
 {
-    public class Client
+    public class Client : ValueType<Client>
     {
-        public DateTime MeetingStartTime { get; set; }
-        public DateTime MeetingEndTime { get; set; }
-        public Address Address { get; set; }
+        public DateTime MeetingStartTime { get; }
+        public DateTime MeetingEndTime { get; }
+        public Address Address { get; }
 	    public readonly string Name;
 
 	    public TimeSpan MeetingDuration => MeetingEndTime - MeetingStartTime;
@@ -26,11 +27,5 @@ namespace GeneticRoute
 		    : this(address, meetingStartTime, meetingStartTime + duration, name)
 	    {
 	    }
-
-        public override int GetHashCode()
-        {
-	        return (379 * ((379 * MeetingStartTime.GetHashCode()) ^ MeetingEndTime.GetHashCode())) ^
-	               Address.GetHashCode();
-        }
-    }
+	}
 }

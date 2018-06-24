@@ -1,26 +1,14 @@
-﻿namespace GeneticRoute
+﻿using GeneticRoute.Util;
+
+namespace GeneticRoute
 {
-    public class Address
+    public class Address : ValueType<Address>
     {
-	    private static int idNow;
-        public readonly string Name;
-        private readonly int Id;
+        public string Name { get;}
 
         public Address(string name)
         {
-            Id = idNow++;
             Name = name;
         }
-
-        public override int GetHashCode() => Name.GetHashCode();
-	    public override bool Equals(object obj)
-	    {
-		    return Name == ((Address) obj)?.Name;
-	    }
-
-	    public override string ToString()
-	    {
-		    return Name;
-	    }
     }
 }

@@ -70,7 +70,6 @@ namespace GeneticRoute
             while (!endCondition.IsEnd(currentCombinations, envData))
             {
                 var selected = estimator.SelectBests(currentCombinations, countToSelect, envData);
-				System.Console.WriteLine();
                 var crossed = crosser.Cross(selected, envData);
                 currentCombinations = mutator.Mutate(crossed, envData);
                 best = estimator.SelectBests(best == null ? currentCombinations : currentCombinations.Concat(new[] { best }).ToList(), 1, envData).First();

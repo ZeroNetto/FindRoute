@@ -33,7 +33,8 @@ namespace GeneticRoute
         {
             currentTime = currentTime.RoundToNearestConstMinutes();
             if (!addressesInRightRange.ContainsKey(currentTime))
-                throw new FillingDictionaryException("Что-то пошло не так");
+                throw new FillingDictionaryException("Can't get addresses in right range " +
+                        $"[{address}] at {currentTime} (can't find key in dictionary)");
             return addressesInRightRange[currentTime][address];
         }
 
