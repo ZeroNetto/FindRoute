@@ -3,8 +3,8 @@ using System.Runtime.Serialization;
 
 namespace GeneticRoute
 {
-    [System.Serializable]
-    public class AcquisitionApiException : System.ApplicationException
+    [Serializable]
+    public class AcquisitionApiException : ApplicationException
     {
         public AcquisitionApiException() { }
 

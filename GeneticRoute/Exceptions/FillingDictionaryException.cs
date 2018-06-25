@@ -3,8 +3,8 @@ using System.Runtime.Serialization;
 
 namespace GeneticRoute
 {
-    [System.Serializable]
-    public class FillingDictionaryException : System.ApplicationException
+    [Serializable]
+    public class FillingDictionaryException : ApplicationException
     {
         public FillingDictionaryException() { }
 

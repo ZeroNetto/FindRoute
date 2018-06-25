@@ -7,10 +7,12 @@ namespace GeneticRoute
 	{ 
 		public static void Main(string[] args)
 		{
+			const int startPopulationCount = 20;
+			const int selectedCount = 10;
 			var container = GetDiContainer();
 			var routeFinder = container.Resolve<RouteFinder>();
-			var startPopulation = routeFinder.GenerateStartPopulation(4).ToList();
-			var result = routeFinder.GeneticAlgorithm(startPopulation, 4);
+			var startPopulation = routeFinder.GenerateStartPopulation(startPopulationCount).ToList();
+			var result = routeFinder.GeneticAlgorithm(startPopulation, selectedCount);
 		}
 
 		private static IContainer GetDiContainer()
